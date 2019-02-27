@@ -1,0 +1,32 @@
+.App {
+  text-align: center;
+  background-image: url('./background-image.jpg');
+  min-height: 100vh;
+  display: grid;
+  grid-template-areas: 
+  ". display ."
+  ". drumKit .";
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: 20% 1fr 20%;
+}
+.App-link {
+  color: #61dafb;
+}
+#display-paper{
+  grid-area: display;
+  padding: 20px;
+  min-width: 400px;
+}
+#drum-kit{
+  grid-area: drumKit;
+  align-self:start;
+  max-width: 500px;
+  width: 500px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.drum-pad {
+  margin: 10px !important;
+}
