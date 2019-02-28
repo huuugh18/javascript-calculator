@@ -1,98 +1,190 @@
 import React, { Component } from 'react';
 import './App.css';
+import './Calculator.css'
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Alert from 'react-bootstrap/Alert'
 
-
-const drumElements = [
-  {id:'Splash', actionKey:'Q', source:'https://audio-previews.elements.envatousercontent.com/files/135160778/preview.mp3'},
-  {id:'Parrot', actionKey:'W', source:'https://audio-previews.elements.envatousercontent.com/files/148020959/preview.mp3'},
-  {id:'Bird', actionKey:'E', source:'https://audio-previews.elements.envatousercontent.com/files/146374366/preview.mp3'},
-  {id:'Horse', actionKey:'A', source:'https://audio-previews.elements.envatousercontent.com/files/136172320/preview.mp3'},
-  {id:'Dog', actionKey:'S', source:'https://audio-previews.elements.envatousercontent.com/files/25472138/preview.mp3'},
-  {id:'Thunder', actionKey:'D', source:'https://audio-previews.elements.envatousercontent.com/files/140207732/preview.mp3'},
-  {id:'Raven', actionKey:'Z', source:'https://audio-previews.elements.envatousercontent.com/files/133547872/preview.mp3'},
-  {id:'Sheep', actionKey:'X', source:'https://audio-previews.elements.envatousercontent.com/files/133976703/preview.mp3'},
-  {id:'Cow', actionKey:'C', source:'https://audio-previews.elements.envatousercontent.com/files/79938040/preview.mp3'}
+const numbers = [
+  {id:'seven', value:'7'},
+  {id:'eight', value:'8'},
+  {id:'nine', value:'9'},
+  {id:'four', value:'4'},
+  {id:'five', value:'5'},
+  {id:'six', value:'6'},
+  {id:'one', value:'1'},
+  {id:'two', value:'2'},
+  {id:'three', value:'3'},
+  {id:'zero', value:'0'},
+  {id:'deci', value:'.'}
 ]
-
+const operators= [
+  {id:'add', value:'+'},
+  {id:'subtract', value:'-'},
+  {id:'multiply', value:'*'},
+  {id:'divide', value:'/'},
+]
 class App extends Component {
   constructor(){
     super()
     this.state={
-        displaySound:'Play Something!'
+        mainDisplay: '0',
+        formulaDisplay:'',
+        input:'',
+        output:'',
     }
-    this.handleDisplay = this.handleDisplay.bind(this)
+    this.onClickNumber = this.onClickNumber.bind(this)
+    this.onClickOperator = this.onClickOperator.bind(this)
+    this.onClickClear = this.onClickClear.bind(this)
+    this.onClickEnter = this.onClickEnter.bind(this)
+
   }
-  handleDisplay = newSound => {
-    this.setState({ displaySound:newSound })
+  onClickNumber = value => {
+    const curVal = this.state.mainDisplay
+    // overide current display with new number
+    if (curVal === '0' || curVal === '+' || curVal === '-' || curVal === '*' || curVal === '/') {
+      return this.setState({ mainDisplay:value })
+    }
+    // add onto currently displayed number
+    return this.setState({mainDisplay: this.state.mainDisplay + value})
   }
 
+  onClickOperator = operator => {
+    const currentValue = this.state.mainDisplay
+    console.log('current display value',currentValue)
+    // if no numbers then return since nothing to calculate
+    if(currentValue === '0'){
+      return
+    }
+    // if formula state empty, then set formula state
+    if(this.state.formulaDisplay === ''){
+      this.setState({
+        mainDisplay: operator,
+        formulaDisplay: this.state.mainDisplay + ' ' + operator
+      })
+    }
+    // if formula started, then add display number and operator to formula state
+    this.setState({
+      mainDisplay: operator,
+      formulaDisplay: this.state.formulaDisplay + this.state.mainDisplay + ' ' + operator
+    })
+
+
+  }
+  onClickClear = () => this.setState({ mainDisplay:'0',formulaDisplay:''})
+  onClickEnter =() => {
+    
+    this.setState({formulaDisplay: this.state.formulaDisplay + this.state.mainDisplay})
+  }
   render() {
     return (
-      <div className="App" id="drum-machine">
-        <Paper id="display-paper">
-          <Typography variant="h3" id="display">
-            {this.state.displaySound}
+      <div className='App' id="drum-machine">
+        <Paper id="title">
+          <Typography variant="h3">
+            Calculon
           </Typography>
         </Paper>
-        <Paper id="drum-kit">
+        <Paper id='calculator'>
+          <Alert 
+            variant='secondary'
+            id='formula-display'
+            style={{marginBottom:0}}
+          >
+            {this.state.formulaDisplay}
+          </Alert>
+          <Alert 
+            variant='primary' 
+            id='display' 
+            style={{marginBottom:0}}
+          >
+            {this.state.mainDisplay}
+          </Alert>
           {
-            drumElements.map(i => (
-              <DrumPadElement
-                key={i.id} 
-                sound={i.id} 
-                actionKey={i.actionKey} 
-                source={i.source} 
-                handleDisplay={this.handleDisplay}
+            numbers.map(i => (
+              <NumberButton
+                key={i.id}
+                id={i.id}
+                value={i.value} 
+                onSelect={this.onClickNumber}
               />
             ))
           }
-
+          {
+            operators.map(i => (
+              <OperatorButton 
+                key={i.id}
+                id={i.id}
+                value={i.value}
+                onSelect={this.onClickOperator}
+              />
+            ))
+          }
+          <div id='enter'>
+            <Button 
+              onClick={this.onClickEnter}
+              variant='contained'
+              color='primary'
+              size='large'
+              fullWidth
+            >
+              Enter
+            </Button>
+          </div>
+          <div id='clear'>
+            <Button
+              onClick={this.onClickClear}
+              variant='contained'
+              size='large'
+              color='secondary'
+              fullWidth
+            >
+              AC
+            </Button>
+          </div>
         </Paper>
       </div>
     );
   }
 }
 
-class DrumPadElement extends Component {
-  componentDidMount () {
-    document.addEventListener('keydown', this.handleKeyDown)
-    window.focus()
-  }
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown)
-  }
-  handleKeyDown = e => {
-    if(e.keyCode === this.props.actionKey.charCodeAt()) {
-      this.audio.play()
-      this.audio.currentTime = 0
-      this.props.handleDisplay(this.props.sound)
-    }
-  }
-  handleDrumClick = () => {
-    this.audio.play()
-    this.audio.currentTime = 0
-    this.props.handleDisplay(this.props.sound)
-  }
+
+class OperatorButton extends Component {
+  
+  handleOpClick = () => this.props.onSelect(this.props.value)
+
   render(){
     return(
         <Button 
-          className='drum-pad'
-          id={this.props.sound}
-          onClick={this.handleDrumClick}
+          className='num-pad'
+          id={this.props.id}
+          onClick={this.handleOpClick}
           color='primary'
           variant='outlined'
           size='large'
         >
-          {this.props.actionKey}
-          <audio 
-            className={'clip'}
-            src={this.props.source} 
-            id={this.props.actionKey}
-            ref={ref => this.audio = ref}>
-          </audio>
+          {this.props.value}
+        </Button>
+    )
+  }
+}
+
+
+class NumberButton extends Component {
+  
+  handleNumberPress = () => this.props.onSelect(this.props.value)
+
+  render(){
+    return(
+        <Button 
+          className='num-pad'
+          id={this.props.id}
+          onClick={this.handleNumberPress}
+          color='primary'
+          variant='outlined'
+          size='large'
+        >
+          {this.props.value}
         </Button>
     )
   }
