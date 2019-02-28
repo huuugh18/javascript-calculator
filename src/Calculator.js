@@ -23,9 +23,9 @@ class Calculator extends Component {
   }
   onClickNumber = value => {
     const curVal = this.state.mainDisplay
-    // overide current display with new number
     if (curVal === '0' || curVal === '+' || curVal === '-' || curVal === '*' || curVal === '/') {
-      return this.setState({ mainDisplay:value })
+        // overide current display with new number  
+        return this.setState({ mainDisplay:value })
     }
     // add onto currently displayed number
     return this.setState({mainDisplay: this.state.mainDisplay + value})
@@ -56,10 +56,13 @@ class Calculator extends Component {
     // otherwise add to number
     return this.setState({mainDisplay:this.state.mainDisplay + '.'})
   }
-  onClickClear = () => this.setState({ mainDisplay:'0',formulaDisplay:''})
-  onClickEnter =() => {
-    this.setState({formulaDisplay: this.state.formulaDisplay + ' ' + this.state.mainDisplay})
 
+  onClickClear = () => this.setState({ mainDisplay:'0',formulaDisplay:''})
+
+  onClickEnter =() => {
+        const newExp = this.state.formulaDisplay + ' ' + this.state.mainDisplay    
+        const evaluatedExp = eval(newExp)
+        this.setState({formulaDisplay: newExp, mainDisplay: evaluatedExp})
   }
   render() {
     return (
