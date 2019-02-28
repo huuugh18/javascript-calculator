@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 import './Calculator.css'
+
+import NumPadButton from './NumPadBtn'
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -16,8 +18,7 @@ const numbers = [
   {id:'one', value:'1'},
   {id:'two', value:'2'},
   {id:'three', value:'3'},
-  {id:'zero', value:'0'},
-  {id:'deci', value:'.'}
+  {id:'zero', value:'0'}
 ]
 const operators= [
   {id:'add', value:'+'},
@@ -36,9 +37,9 @@ class App extends Component {
     }
     this.onClickNumber = this.onClickNumber.bind(this)
     this.onClickOperator = this.onClickOperator.bind(this)
+    this.onClickDecimal = this.onClickDecimal.bind(this)
     this.onClickClear = this.onClickClear.bind(this)
     this.onClickEnter = this.onClickEnter.bind(this)
-
   }
   onClickNumber = value => {
     const curVal = this.state.mainDisplay
@@ -52,13 +53,10 @@ class App extends Component {
 
   onClickOperator = operator => {
     const currentValue = this.state.mainDisplay
-    console.log('current display value',currentValue)
     // if no numbers then return since nothing to calculate
-    if(currentValue === '0'){
-      return
-    }
+    if(currentValue === '0'){return}
     // if formula state empty, then set formula state
-    if(this.state.formulaDisplay === ''){
+    else if(this.state.formulaDisplay === ''){
       this.setState({
         mainDisplay: operator,
         formulaDisplay: this.state.mainDisplay + ' ' + operator
@@ -69,13 +67,19 @@ class App extends Component {
       mainDisplay: operator,
       formulaDisplay: this.state.formulaDisplay + this.state.mainDisplay + ' ' + operator
     })
+  }
 
-
+  onClickDecimal = () => {
+    // if already a decimal in the number return
+    const curVal = this.state.mainDisplay
+    if(curVal.includes('.')){return}
+    // otherwise add to number
+    return this.setState({mainDisplay:this.state.mainDisplay + '.'})
   }
   onClickClear = () => this.setState({ mainDisplay:'0',formulaDisplay:''})
   onClickEnter =() => {
-    
-    this.setState({formulaDisplay: this.state.formulaDisplay + this.state.mainDisplay})
+    this.setState({formulaDisplay: this.state.formulaDisplay + ' ' + this.state.mainDisplay})
+
   }
   render() {
     return (
@@ -102,7 +106,7 @@ class App extends Component {
           </Alert>
           {
             numbers.map(i => (
-              <NumberButton
+              <NumPadButton
                 key={i.id}
                 id={i.id}
                 value={i.value} 
@@ -110,9 +114,17 @@ class App extends Component {
               />
             ))
           }
+            <NumPadButton 
+              id={'deci'}
+              value={'.'}
+              onSelect={this.onClickDecimal}
+            >
+              .
+            </NumPadButton>
+
           {
             operators.map(i => (
-              <OperatorButton 
+              <NumPadButton 
                 key={i.id}
                 id={i.id}
                 value={i.value}
@@ -149,45 +161,5 @@ class App extends Component {
 }
 
 
-class OperatorButton extends Component {
-  
-  handleOpClick = () => this.props.onSelect(this.props.value)
-
-  render(){
-    return(
-        <Button 
-          className='num-pad'
-          id={this.props.id}
-          onClick={this.handleOpClick}
-          color='primary'
-          variant='outlined'
-          size='large'
-        >
-          {this.props.value}
-        </Button>
-    )
-  }
-}
-
-
-class NumberButton extends Component {
-  
-  handleNumberPress = () => this.props.onSelect(this.props.value)
-
-  render(){
-    return(
-        <Button 
-          className='num-pad'
-          id={this.props.id}
-          onClick={this.handleNumberPress}
-          color='primary'
-          variant='outlined'
-          size='large'
-        >
-          {this.props.value}
-        </Button>
-    )
-  }
-}
 
 export default App;
