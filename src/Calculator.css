@@ -9,7 +9,7 @@
         'four five six subtract'
         'one two three multiply'
         '. zero deci divide'
-        'clear enter enter enter';
+        'clear equals equals equals';
 }
 #formula-display{
     grid-area: formula;
@@ -69,11 +69,11 @@
 #zero{
     grid-area:zero;
 }
-#deci{
+#decimal{
     grid-area: deci;
 }
-#enter{
-    grid-area:enter;
+#equals{
+    grid-area:equals;
     width: 100%;
 }
 #clear{

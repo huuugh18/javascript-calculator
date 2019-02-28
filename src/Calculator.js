@@ -32,9 +32,9 @@ class Calculator extends Component {
   }
 
   onClickOperator = operator => {
-    const currentValue = this.state.mainDisplay
-    // if no numbers then return since nothing to calculate
-    if(currentValue === '0'){return}
+    const curVal = this.state.mainDisplay
+    // if no numbers or operator last selected then return since nothing to calculate
+    if (curVal === '0' || curVal === '+' || curVal === '-' || curVal === '*' || curVal === '/') {return}
     // if formula state empty, then set formula state
     else if(this.state.formulaDisplay === ''){
       this.setState({
@@ -103,13 +103,13 @@ class Calculator extends Component {
             ))
           }
           <NumPadButton 
-            id={'deci'}
+            id={'decimal'}
             value={'.'}
             onSelect={this.onClickDecimal}
           >
             .
           </NumPadButton>
-          <div id='enter'>
+          <div id='equals'>
             <Button 
               onClick={this.onClickEnter}
               variant='contained'
@@ -117,7 +117,7 @@ class Calculator extends Component {
               size='large'
               fullWidth
             >
-              Enter
+              =
             </Button>
           </div>
           <div id='clear'>
