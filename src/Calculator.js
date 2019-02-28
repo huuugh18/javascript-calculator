@@ -32,12 +32,22 @@ class Calculator extends Component {
   }
 
   onClickOperator = operator => {
+      // what if equal selected to calculate result then click opertaor - need to continue calculation but with calculated value as first number 
+    //   5 - 2 = / 2 =" should produce an output of "1.5" : expected '-6.5' to equal '1.5'
     const curVal = this.state.mainDisplay
     // if no numbers or operator last selected then return since nothing to calculate
-    if (curVal === '0' || curVal === '+' || curVal === '-' || curVal === '*' || curVal === '/') {return}
+    if (curVal === '0' || operator === curVal) {return}
+    // replace operotar if new operator selected
+    if (curVal === '+' || curVal === '-' || curVal === '*' || curVal === '/') {
+        const newFormula = this.state.formulaDisplay.slice(0,-1) + operator
+        return this.setState({
+            mainDisplay:operator,
+            formulaDisplay:newFormula
+        })
+    }
     // if formula state empty, then set formula state
     else if(this.state.formulaDisplay === ''){
-      this.setState({
+      return this.setState({
         mainDisplay: operator,
         formulaDisplay: this.state.mainDisplay + ' ' + operator
       })
@@ -61,7 +71,7 @@ class Calculator extends Component {
 
   onClickEnter =() => {
         const newExp = this.state.formulaDisplay + ' ' + this.state.mainDisplay    
-        const evaluatedExp = eval(newExp)
+        const evaluatedExp = Math.round(eval(newExp)*100000)/100000
         this.setState({formulaDisplay: newExp, mainDisplay: evaluatedExp})
   }
   render() {
@@ -109,8 +119,9 @@ class Calculator extends Component {
           >
             .
           </NumPadButton>
-          <div id='equals'>
+          <div id='equals-container'>
             <Button 
+                id='equals'
               onClick={this.onClickEnter}
               variant='contained'
               color='primary'
@@ -120,8 +131,9 @@ class Calculator extends Component {
               =
             </Button>
           </div>
-          <div id='clear'>
+          <div id='clear-container'>
             <Button
+                id='clear'
               onClick={this.onClickClear}
               variant='contained'
               size='large'

@@ -72,11 +72,11 @@
 #decimal{
     grid-area: deci;
 }
-#equals{
+#equals-container{
     grid-area:equals;
     width: 100%;
 }
-#clear{
+#clear-container{
     grid-area:clear;
     width: 100%;
 }
