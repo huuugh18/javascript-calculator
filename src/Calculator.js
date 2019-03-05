@@ -12,8 +12,7 @@ class Calculator extends Component {
     this.state={
         mainDisplay: '0',
         formulaDisplay:'',
-        input:'',
-        output:'',
+        calculated: false,
     }
     this.onClickNumber = this.onClickNumber.bind(this)
     this.onClickOperator = this.onClickOperator.bind(this)
@@ -27,6 +26,7 @@ class Calculator extends Component {
         // overide current display with new number  
         return this.setState({ mainDisplay:value })
     }
+    
     // add onto currently displayed number
     return this.setState({mainDisplay: this.state.mainDisplay + value})
   }
@@ -52,6 +52,14 @@ class Calculator extends Component {
         formulaDisplay: this.state.mainDisplay + ' ' + operator
       })
     }
+    // if equals has been used last
+    else if(this.state.calculated === true){
+      return this.setState({
+        mainDisplay: operator, 
+        calculated:false,
+        formulaDisplay: this.state.mainDisplay + ' ' + operator
+      })
+    }
     // if formula started, then add display number and operator to formula state
     this.setState({
       mainDisplay: operator,
@@ -67,12 +75,12 @@ class Calculator extends Component {
     return this.setState({mainDisplay:this.state.mainDisplay + '.'})
   }
 
-  onClickClear = () => this.setState({ mainDisplay:'0',formulaDisplay:''})
+  onClickClear = () => this.setState({ mainDisplay:'0',formulaDisplay:'',calculated:false})
 
   onClickEnter =() => {
         const newExp = this.state.formulaDisplay + ' ' + this.state.mainDisplay    
         const evaluatedExp = Math.round(eval(newExp)*100000)/100000
-        this.setState({formulaDisplay: newExp, mainDisplay: evaluatedExp})
+        this.setState({formulaDisplay: newExp, mainDisplay: evaluatedExp, calculated: true})
   }
   render() {
     return (
