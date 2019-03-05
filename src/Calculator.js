@@ -32,8 +32,6 @@ class Calculator extends Component {
   }
 
   onClickOperator = operator => {
-      // what if equal selected to calculate result then click opertaor - need to continue calculation but with calculated value as first number 
-    //   5 - 2 = / 2 =" should produce an output of "1.5" : expected '-6.5' to equal '1.5'
     const curVal = this.state.mainDisplay
     // if no numbers or operator last selected then return since nothing to calculate
     if (curVal === '0' || operator === curVal) {return}
